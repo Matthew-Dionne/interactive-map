@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Interactive Map</title>
+    <style>
+      #map {
+        height: 100%;
+        width: 100%;
+      }
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+    </style>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9J_zCJMayc7-IY0tHz28uviJN_7DFuNY"></script>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      let map;
+
+      function initMap(locations) {
+        map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: 39.7392, lng: -104.9903 },
+          zoom: 8,
+        });
+
+        locations.forEach(loc => {
+          const marker = new google.maps.Marker({
+            position: { lat: loc.latitude, lng: loc.longitude },
+            map: map,
+            title: loc.name,
+          });
+
+          const infoWindow = new google.maps.InfoWindow({
+            content: `<strong>${loc.name}</strong><br>${loc.address}`,
+          });
+
+          marker.addListener("click", () => {
+            infoWindow.open(map, marker);
+          });
+        });
+      }
+
+      window.addEventListener("message", (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (Array.isArray(data)) {
+            initMap(data);
+          }
+        } catch (e) {
+          console.error("Invalid data received:", e);
+        }
+      });
+    </script>
+  </body>
+</html>
