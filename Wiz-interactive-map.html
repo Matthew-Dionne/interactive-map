@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -14,33 +13,39 @@
         height: 100%;
       }
     </style>
-  </head>
-  <body>
     <script>
- let map;
+      var map;
+
       function initMap() {
-        map = new google.maps.Map(document.getElementById("map"), {
-          center: { lat: 39.7392, lng: -104.9903 },
-          zoom: 8,
+        document.addEventListener('DOMContentLoaded', function () {
+          var mapDiv = document.getElementById('map');
+          if (mapDiv) {
+            map = new google.maps.Map(mapDiv, {
+              center: { lat: 39.7392, lng: -104.9903 },
+              zoom: 8
+            });
+          } else {
+            console.error('Map div not found');
+          }
         });
       }
 
-      window.addEventListener("message", (event) => {
+      window.addEventListener("message", function(event) {
         try {
-          const data = JSON.parse(event.data);
-          if (Array.isArray(data)) {
-            data.forEach(loc => {
-              const marker = new google.maps.Marker({
+          var data = JSON.parse(event.data);
+          if (Array.isArray(data) && map) {
+            data.forEach(function(loc) {
+              var marker = new google.maps.Marker({
                 position: { lat: loc.latitude, lng: loc.longitude },
                 map: map,
-                title: loc.name,
+                title: loc.name
               });
 
-              const infoWindow = new google.maps.InfoWindow({
-                content: `<strong>${loc.name}</strong><br>${loc.address}`,
+              var infoWindow = new google.maps.InfoWindow({
+                content: '<strong>' + loc.name + '</strong><br>' + loc.address
               });
 
-              marker.addListener("click", () => {
+              marker.addListener("click", function() {
                 infoWindow.open(map, marker);
               });
             });
@@ -50,6 +55,9 @@
         }
       });
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9J_zCJMayc7-IY0tHz28uviJN_7DFuNYY&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9J_zCJMayc7-IY0tHz28uviJN_7DFuNY&callback=initMap"></script>
+  </head>
+  <body>
+    <div id="map"></div>
   </body>
 </html>
